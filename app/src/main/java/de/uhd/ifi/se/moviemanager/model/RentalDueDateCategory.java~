@@ -1,0 +1,107 @@
+package de.uhd.ifi.se.moviemanager.model;
+
+import static java.lang.Math.abs;
+import static de.uhd.ifi.se.moviemanager.util.DateUtils.daysFromNow;
+import static de.uhd.ifi.se.moviemanager.util.DateUtils.normDateTimeToMidnight;
+import static de.uhd.ifi.se.moviemanager.util.DateUtils.now;
+
+import java.util.Date;
+import java.util.Locale;
+
+/**
+ * Describes rental categories according to their due date. Used to sort {@link
+ * Movie}s by their due date. Is also used to sort {@link Renter}s by their
+ * earliest due date.
+ */
+public enum RentalDueDateCategory {
+    OVERDUE("Overdue loans"), ONE_DAY_LEFT("Due in a day"), THREE_DAYS_LEFT(
+            "Due in 3 days"), ONE_WEEK_LEFT("Due in a week"), ONE_MONTH_LEFT(
+            "Due in a month"), FUTURE_DUE("Due in future"), NOT_LOANED(
+            "No loans");
+
+    private String message;
+
+    RentalDueDateCategory(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public static RentalDueDateCategory getCategoryOf(Date date) {
+        long daysRemaining = daysFromNow(date);
+        if (daysRemaining <= 1) {
+            return ONE_DAY_LEFT;
+        }
+        if (daysRemaining <= 3) {
+            return THREE_DAYS_LEFT;
+        }
+        if (daysRemaining <= 7) {
+            return ONE_WEEK_LEFT;
+        }
+        if (daysRemaining <= 31) {
+            return ONE_MONTH_LEFT;
+        }
+        return FUTURE_DUE;
+    }
+
+    public static RentalDueDateCategory findByMessage(String message) {
+        for (RentalDueDateCategory category : values()) {
+            if (category.getMessage().equals(message)) {
+                return category;
+            }
+        }
+        return NOT_LOANED;
+    }
+
+    public static String getAppendix(Date dueDate) {
+        if (dueDate == null) {
+            return "";
+        }
+        long days = daysFromNow(dueDate);
+        String format;
+
+        if (isDateOverdue(dueDate)) {
+            format = " (Overdue since %d days)";
+        } else {
+            format = " (%d days)";
+        }
+
+        return String.format(Locale.GERMAN, format, abs(days));
+    }
+
+    public static boolean isDateOverdue(Date dueDate) {
+        if (dueDate == null) {
+            return false;
+        }
+        return normDateTimeToMidnight(now()).after(dueDate);
+    }
+
+    public static int compareDueLoanCategories(String cat1, String cat2) {
+        RentalDueDateCategory category1 = findByMessage(cat1);
+        RentalDueDateCategory category2 = findByMessage(cat2);
+
+        if (category1 == category2) {
+            return 0;
+        }
+        if (category1 == null) {
+            return -1;
+        }
+        if (category2 == null) {
+            return 1;
+        }
+        return category1.compareTo(category2);
+    }
+
+
+    public static String getDueDateCategoryFor(Movie movie) {
+        if (movie == null || !movie.isOnLoan()) {
+            return NOT_LOANED.getMessage();
+        }
+        if (movie.isOverdue()) {
+            return OVERDUE.getMessage();
+        }
+        return getCategoryOf(movie.getDueDate()).getMessage();
+    }
+}
