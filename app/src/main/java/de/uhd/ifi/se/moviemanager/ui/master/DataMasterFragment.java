@@ -50,44 +50,28 @@ import de.uhd.ifi.se.moviemanager.util.DimensionUtils;
  * @param <T> {@link Movie} or {@link Performer}
  *            data class.
  */
+
 public abstract class DataMasterFragment<T extends Identifiable & Nameable & ImageBased & Parcelable>
         extends Fragment {
+
+    public static String ARGUMENT_NAME_ID = "nameId";
+    public static String ARGUMENT_ORIGINAL_DATA = "originalData";
+
     protected final StorageManagerAccess storage = StorageManagerAccess.getInstance();
     protected final MovieManagerModel model = MovieManagerModel.getInstance();
     protected List<T> originalData;
     protected List<SortingMenuItem<T>> sortingMenuItems;
-    private int nameId;
+    protected int nameId;
     private RecyclerView list;
     protected DataRVAdapter<T> adapter;
 
-    /**
-     * Factory method to create the Movie MasterView.
-     *
-     * @param nameId refers to the name of the fragment (=Movie).
-     * @param movies to be shown the master view.
-     * @return {@link MovieMasterFragment}.
-     */
-    public static DataMasterFragment<Movie> newMovieFragmentInstance(
-            @StringRes int nameId, Set<Movie> movies) {
-        DataMasterFragment<Movie> fragment = new MovieMasterFragment();
-        fragment.nameId = nameId;
-        fragment.originalData = new ArrayList<>(movies);
-        return fragment;
-    }
-
-    /**
-     * Factory method to create the Performer MasterView.
-     *
-     * @param nameId     refers to the name of the fragment (=Performer).
-     * @param performers to be shown the master view.
-     * @return {@link PerformerMasterFragment}.
-     */
-    public static DataMasterFragment<Performer> newPerformerFragmentInstance(
-            @StringRes int nameId, Set<Performer> performers) {
-        DataMasterFragment<Performer> fragment = new PerformerMasterFragment();
-        fragment.nameId = nameId;
-        fragment.originalData = new ArrayList<>(performers);
-        return fragment;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            nameId = getArguments().getInt(ARGUMENT_NAME_ID);
+            originalData = getArguments().getParcelableArrayList(ARGUMENT_ORIGINAL_DATA);
+        }
     }
 
     @Override

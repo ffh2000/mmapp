@@ -52,6 +52,7 @@ public class MovieManagerModel {
      * Provides the singleton instance of the MovieManager model. Creates a new
      * instance in case it is null.
      *
+     *
      * @return {@link MovieManagerModel} singleton instance.
      */
     public static MovieManagerModel getInstance() {

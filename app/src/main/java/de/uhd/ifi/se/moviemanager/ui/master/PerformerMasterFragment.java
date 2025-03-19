@@ -1,8 +1,17 @@
 package de.uhd.ifi.se.moviemanager.ui.master;
 
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 import de.uhd.ifi.se.moviemanager.R;
+import de.uhd.ifi.se.moviemanager.model.Movie;
 import de.uhd.ifi.se.moviemanager.model.Performer;
 import de.uhd.ifi.se.moviemanager.ui.adapter.DataRVAdapter;
 import de.uhd.ifi.se.moviemanager.ui.detail.PerformerDetailActivity;
@@ -17,6 +26,15 @@ import de.uhd.ifi.se.moviemanager.ui.view.SortingMenuItem;
  */
 public class PerformerMasterFragment extends DataMasterFragment<Performer> {
 
+    public static PerformerMasterFragment getInstance(@StringRes int nameId, Set<Performer> movies) {
+        PerformerMasterFragment fragment = new PerformerMasterFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(ARGUMENT_NAME_ID, nameId);
+        bundle.putParcelableArrayList(ARGUMENT_ORIGINAL_DATA, new ArrayList<>(movies));
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     @Override
     protected void addSortingMenuItems() {
         String name = getString(R.string.performer_criterion_name);
@@ -29,6 +47,13 @@ public class PerformerMasterFragment extends DataMasterFragment<Performer> {
         sortingMenuItems
                 .add(new SortingMenuItem<>(rating, new RatingComparator<>()));
         sortingMenuItems.add(new SortingMenuItem<>(age, new AgeComparator()));
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null)
+            originalData = getArguments().getParcelableArrayList(ARGUMENT_ORIGINAL_DATA);
     }
 
     @Override

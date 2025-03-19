@@ -1,8 +1,5 @@
 package de.uhd.ifi.se.moviemanager;
 
-import static de.uhd.ifi.se.moviemanager.ui.master.DataMasterFragment.newMovieFragmentInstance;
-import static de.uhd.ifi.se.moviemanager.ui.master.DataMasterFragment.newPerformerFragmentInstance;
-
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.MenuItem;
@@ -22,6 +19,8 @@ import de.uhd.ifi.se.moviemanager.model.Movie;
 import de.uhd.ifi.se.moviemanager.model.MovieManagerModel;
 import de.uhd.ifi.se.moviemanager.model.Performer;
 import de.uhd.ifi.se.moviemanager.storage.StorageManagerAccess;
+import de.uhd.ifi.se.moviemanager.ui.master.MovieMasterFragment;
+import de.uhd.ifi.se.moviemanager.ui.master.PerformerMasterFragment;
 import de.uhd.ifi.se.moviemanager.ui.master.SearchMasterFragment;
 import de.uhd.ifi.se.moviemanager.util.ActivityUtils;
 
@@ -58,7 +57,9 @@ public class MovieManagerActivity extends AppCompatActivity {
     }
 
     private void setThreadPolicy() {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll()
+                .build();
         StrictMode.setThreadPolicy(policy);
     }
 
@@ -70,7 +71,7 @@ public class MovieManagerActivity extends AppCompatActivity {
     private Fragment createMoviesFragment() {
         Set<Movie> movies = model.getMovies();
         final int menuId = R.string.bottom_navigation_menu_movies;
-        return newMovieFragmentInstance(menuId, movies);
+        return MovieMasterFragment.getInstance(menuId, movies);
     }
 
     private boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -95,7 +96,7 @@ public class MovieManagerActivity extends AppCompatActivity {
     private Fragment createPerformersFragment() {
         Set<Performer> performers = model.getPerformers();
         final int menuId = R.string.bottom_navigation_menu_performers;
-        return newPerformerFragmentInstance(menuId, performers);
+        return PerformerMasterFragment.getInstance(menuId, performers);
     }
 
     private Fragment createSearchFragment() {

@@ -1,6 +1,14 @@
 package de.uhd.ifi.se.moviemanager.ui.master;
 
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 import de.uhd.ifi.se.moviemanager.R;
 import de.uhd.ifi.se.moviemanager.model.Movie;
@@ -18,6 +26,15 @@ import de.uhd.ifi.se.moviemanager.ui.view.SortingMenuItem;
  * Movie MasterView
  */
 public class MovieMasterFragment extends DataMasterFragment<Movie> {
+
+    public static MovieMasterFragment getInstance(@StringRes int nameId, Set<Movie> movies) {
+        MovieMasterFragment fragment = new MovieMasterFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(ARGUMENT_NAME_ID, nameId);
+        bundle.putParcelableArrayList(ARGUMENT_ORIGINAL_DATA, new ArrayList<>(movies));
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Override
     protected void addSortingMenuItems() {
